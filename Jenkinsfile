@@ -47,7 +47,7 @@ pipeline {
             steps {
                 sh '''
                 set -e
-                source $VENV_DIR/bin/activate
+                . $VENV_DIR/bin/activate
                 pip install --upgrade pip
                 pip install -r requirements-pyats-24.3-python311.txt
                 '''
@@ -58,7 +58,7 @@ pipeline {
             steps {
                 sh '''
                 set -e
-                source $VENV_DIR/bin/activate
+                . $VENV_DIR/bin/activate
 
                 echo "Python version:"
                 python --version
