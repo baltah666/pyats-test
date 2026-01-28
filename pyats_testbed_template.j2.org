@@ -1,0 +1,33 @@
+---
+testbed:
+    name: Techit-Sweden
+    alias: Techit-Sweden
+    credentials:
+        default:
+            username: '%ASK{Enter User Name}'
+            password: '%ASK{Enter User Password}'
+        #enable:
+            #password: '%ASK{Enter Enable Password}'
+    custom:
+        owner: Shariful Hoque
+        contacts: shariful.hoque@vattenfall.com
+
+devices:
+{% for i in inventory %}
+    {{ i.dev_name|indent }}:
+        alias: {{ i.dev_alias }}
+        os: {{ i.dev_os }}
+        type: {{ i.dev_os }}
+        connections:
+            cli:
+                ip: {{ i.dev_ip }}
+                protocol: ssh
+                ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o HostKeyAlgorithms=+ssh-dss,ssh-rsa -o KexAlgorithms=+diffie-hellman-group1-sha1,diffie-hellman-group-exchange-sha>
+                arguments:
+                    learn_hostname: True
+        custom:
+            net_location: {{ i.dev_net_location }}
+            net_type: {{ i.dev_net_type }}
+            netmiko_driver: {{ i.dev_netmiko_type }}
+{% endfor %}
+

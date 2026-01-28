@@ -1,0 +1,178 @@
+#!/usr/bin/env python3
+
+import time
+import re
+from pyats.topology import loader
+import pandas as pd
+from tabulate import tabulate
+
+# ==============================
+# CONFIG
+# ==============================
+TESTBED_FILE = "testbed.yaml"
+OUTPUT_EXCEL = "pyats_device_ports_status.xlsx"
+
+MEDIA_COLUMNS = [
+    "10/100BaseTX",
+    "10/100/1000BaseTX",
+    "1000BaseLX SFP",
+]
+
+STATUS_WORDS = {
+    "connected",
+    "notconnect",
+    "disabled",
+    "err-disabled",
+    "inactive",
+}
+
+# ==============================
+# PARSERS
+# ==============================
+def parse_interfaces(output: str):
+    total_ports = 0
+    active_ports = 0
+    media_counts = {m: 0 for m in MEDIA_COLUMNS}
+
+    for raw in output.splitlines():
+        line = raw.strip()
+
+        if not line or line.startswith("Port"):
+            continue
+
+        if not line.startswith(("Fa", "Gi", "Te", "Po")):
+            continue
+
+        parts = line.split()
+
+        status_idx = None
+        for i, p in enumerate(parts):
+            if p in STATUS_WORDS:
+                status_idx = i
+                break
+
+        if status_idx is None or len(parts) < status_idx + 5:
+            continue
+
+        status = parts[status_idx]
+        port_type = " ".join(parts[status_idx + 4:])
+
+        total_ports += 1
+
+        if status == "connected":
+            active_ports += 1
+            for media in MEDIA_COLUMNS:
+                if media in port_type:
+                    media_counts[media] += 1
+
+    return total_ports, active_ports, media_counts
+
+
+def parse_inventory(output: str):
+    """
+    Safely extract PID + Serial from 'show inventory'
+    """
+    pid = "N/A"
+    serial = "N/A"
+
+    for line in output.splitlines():
+        if "PID:" in line and "SN:" in line:
+            m = re.search(r"PID:\s*([^,]+).*SN:\s*(\S+)", line)
+            if m:
+                pid = m.group(1).strip()
+                serial = m.group(2).strip()
+                break
+
+    return pid, serial
+
+
+def pct(active, total):
+    return round((active / total) * 100, 2) if total else 0
+
+
+# ==============================
+# MAIN
+# ==============================
+def main():
+    print("\n📦 Loading testbed...")
+    testbed = loader.load(TESTBED_FILE)
+
+    devices = [
+        d for d in testbed.devices.values()
+        if d.os in ("ios", "iosxe")
+    ]
+
+    print(f"\n🔌 Connecting to {len(devices)} devices\n")
+
+    start = time.time()
+
+    testbed.connect(
+        learn_hostname=True,
+        init_exec_commands=[],
+        init_config_commands=[]
+    )
+
+    rows = []
+
+    for device in devices:
+        row = {
+            "Hostname": device.name,
+            "IP Address": device.connections.get("cli", {}).get("ip", "N/A"),
+            "Serial Number": "N/A",
+            "PID": "N/A",
+            "Total Ports": 0,
+            "Active Ports": 0,
+            "Port Utilization %": 0,
+        }
+
+        for m in MEDIA_COLUMNS:
+            row[m] = 0
+
+        try:
+            print(f"📊 Processing {device.name} ...")
+
+            # -------- Inventory (SAFE) --------
+            try:
+                platform = device.learn("platform")
+                if isinstance(platform.chassis, dict):
+                    row["Serial Number"] = platform.chassis.get("serial_number", "N/A")
+                    row["PID"] = platform.chassis.get("model", "N/A")
+                else:
+                    raise ValueError("Non-dict chassis")
+            except Exception:
+                inv = device.execute("show inventory")
+                row["PID"], row["Serial Number"] = parse_inventory(inv)
+
+            # -------- Interfaces --------
+            output = device.execute("show interfaces status")
+            total, active, media = parse_interfaces(output)
+
+            row["Total Ports"] = total
+            row["Active Ports"] = active
+            row["Port Utilization %"] = pct(active, total)
+
+            for m in MEDIA_COLUMNS:
+                row[m] = media[m]
+
+        except Exception as e:
+            print(f"❌ Failed on {device.name}: {e}")
+
+        rows.append(row)
+
+    testbed.disconnect()
+
+    elapsed = round(time.time() - start, 2)
+
+    df = pd.DataFrame(rows)
+
+    print("\n📊 pyATS Port Utilization Summary\n")
+    print(tabulate(df, headers="keys", tablefmt="grid", showindex=False))
+
+    df.to_excel(OUTPUT_EXCEL, index=False)
+
+    print(f"\n✅ Results saved to {OUTPUT_EXCEL}")
+    print(f"⏱ Execution time: {elapsed} seconds")
+
+
+if __name__ == "__main__":
+    main()

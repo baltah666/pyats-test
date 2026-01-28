@@ -1,0 +1,73 @@
+---
+testbed:
+    name: Techit-Sweden
+    alias: Techit-Sweden
+    credentials:
+        default:
+            username: '%ASK{Enter User Name}'
+            password: '%ASK{Enter User Password}'
+    custom:
+        owner: Abdulilah Baltah
+        contacts: Abdulilah,baltah@vattenfall.com
+
+devices:
+    home-lab-access-sw01:
+        alias: home-lab-access-sw01
+        os: ios
+        type: switch
+        connections:
+            cli:
+                ip: 192.168.1.50
+                protocol: ssh
+                ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+                arguments:
+                    learn_hostname: True
+        custom:
+            net_location: Home_Lab
+            net_type: accessctrl-techit
+            netmiko_driver: cisco_ios
+    home-lab-access-sw02:
+        alias: home-lab-access-sw02
+        os: ios
+        type: switch
+        connections:
+            cli:
+                ip: 192.168.1.130
+                protocol: ssh
+                ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+                arguments:
+                    learn_hostname: True
+        custom:
+            net_location: Home_Lab
+            net_type: accessctrl-techit
+            netmiko_driver: cisco_ios
+    home-lab-access-sw03:
+        alias: home-lab-access-sw03
+        os: ios
+        type: switch
+        connections:
+            cli:
+                ip: 192.168.1.51
+                protocol: ssh
+                ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+                arguments:
+                    learn_hostname: True
+        custom:
+            net_location: Home_Lab
+            net_type: accessctrl-techit
+            netmiko_driver: cisco_ios
+    home-lab-core-sw01:
+        alias: home-lab-core-sw01
+        os: iosxe
+        type: switch
+        connections:
+            cli:
+                ip: 192.168.1.52
+                protocol: ssh
+                ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+                arguments:
+                    learn_hostname: True
+        custom:
+            net_location: vlab
+            net_type: accessctrl-techit
+            netmiko_driver: cisco_ios

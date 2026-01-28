@@ -1,0 +1,67 @@
+---
+testbed:
+  name: HomeLab
+  credentials:
+    default:
+      username: '%ASK{Enter User Name}'
+      password: '%ASK{Enter User Password}'
+    enable:
+      password: '%ASK{Enter Enable Password}'
+
+devices:
+
+  home-lab-access-sw01:
+    os: ios
+    type: switch
+    connections:
+      cli:
+        protocol: ssh
+        ip: 192.168.1.50
+        ssh_options: >
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+          -o HostKeyAlgorithms=+ssh-rsa,ssh-dss
+          -o KexAlgorithms=+diffie-hellman-group1-sha1,diffie-hellman-group14-sha1
+          -o Ciphers=+aes256-cbc
+
+  home-lab-access-sw02:
+    os: ios
+    type: switch
+    connections:
+      cli:
+        protocol: ssh
+        ip: 192.168.1.130
+        ssh_options: >
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+          -o HostKeyAlgorithms=+ssh-rsa,ssh-dss
+          -o KexAlgorithms=+diffie-hellman-group1-sha1,diffie-hellman-group14-sha1
+          -o Ciphers=+aes256-cbc
+
+  home-lab-access-sw03:
+    os: ios
+    type: switch
+    connections:
+      cli:
+        protocol: ssh
+        ip: 192.168.1.51
+        ssh_options: >
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+          -o HostKeyAlgorithms=+ssh-rsa,ssh-dss
+          -o KexAlgorithms=+diffie-hellman-group1-sha1,diffie-hellman-group14-sha1
+          -o Ciphers=+aes256-cbc
+
+  home-lab-core-sw01:
+    os: iosxe
+    type: switch
+    connections:
+      cli:
+        protocol: ssh
+        ip: 192.168.1.52
+        ssh_options: >
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+          -o HostKeyAlgorithms=+ssh-rsa,ssh-dss
+          -o KexAlgorithms=+diffie-hellman-group1-sha1,diffie-hellman-group14-sha1
+          -o Ciphers=+aes256-cbc

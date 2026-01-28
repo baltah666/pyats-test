@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+pyats-venv/
+venv/
+
+# Logs
+*.log
+/tmp/
+
+# Excel outputs
+*.xlsx
+
+# Secrets
+.env
+
+# OS
+.DS_Store

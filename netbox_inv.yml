@@ -1,0 +1,19 @@
+plugin: netbox.netbox.nb_inventory
+api_endpoint: http://192.168.1.254:8000
+token: 1479d3740f85e8ab5900b72d31b89cb81fdc2a06
+validate_certs: False
+
+group_by:
+  - device_roles
+  - sites
+
+# Global connection defaults
+compose:
+  ansible_network_os: '"cisco.ios.ios"'
+  ansible_connection: '"network_cli"'
+  ansible_user: '"admin"'
+  ansible_password: '"cisco"'
+  ansible_become: '"yes"'
+  ansible_become_method: '"enable"'
+  ansible_become_password: '"cisco"'
+  ansible_ssh_common_args: '"-oKexAlgorithms=+diffie-hellman-group14-sha1 -oHostKeyAlgorithms=+ssh-rsa -oStrictHostKeyChecking=no"'

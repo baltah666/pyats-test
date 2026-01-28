@@ -1,0 +1,34 @@
+devices:
+  home-lab-access-sw01:
+    os: ios
+    type: switch
+    credentials:
+      default:
+        username: admin
+        password: cisco
+      enable:
+        password: cisco
+    connections:
+      cli:
+        protocol: ssh
+        ip: home-lab-access-sw01
+        arguments:
+          connection_timeout: 60
+          expect_string: '#'
+
+  home-lab-core-sw01:
+    os: iosxe
+    type: switch
+    credentials:
+      default:
+        username: admin
+        password: cisco
+      enable:
+        password: cisco
+    connections:
+      cli:
+        protocol: ssh
+        ip: home-lab-core-sw01
+        arguments:
+          connection_timeout: 60
+          expect_string: '#'

@@ -1,0 +1,14 @@
+{
+    "inventory": [
+        {
+            "dev_name": "home-lab-core-sw01",
+            "dev_alias": "home-lab-core-sw01",
+            "dev_os": "iosxe",
+            "dev_ip": "192.168.1.52",
+            "dev_net_location": "vlab",
+            "dev_net_type": "accessctrl-techit",
+            "dev_netmiko_type": "cisco_ios",
+            "dev_model": "C9200CX-8P-2X2G"
+        }
+    ]
+}
