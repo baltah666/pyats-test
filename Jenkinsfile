@@ -1,26 +1,45 @@
 pipeline {
     agent any
 
+    parameters {
+        text(
+            name: 'CONFIG_COMMANDS',
+            defaultValue: '',
+            description: 'CLI configuration commands to push (multi-line supported)'
+        )
+
+        // Requires "Extended Choice Parameter" plugin
+        extendedChoice(
+            name: 'TESTBEDS',
+            type: 'PT_CHECKBOX',
+            description: 'Select one or more target testbeds',
+            value: '''
+testbed_access_9200.yaml,
+testbed_access_9300.yaml,
+testbed_access_2960.yaml,
+testbed_datacenter_n9k.yaml,
+testbed_routers.yaml,
+testbed_industrial.yaml,
+testbed_core_9500.yaml
+''',
+            multiSelectDelimiter: ','
+        )
+    }
+
     environment {
         PYTHON_BIN = "/usr/bin/python3.11"
         VENV_DIR   = "pyats-venv"
-        REQ_FILE   = "requirements-pyats-24.3-python311.txt"
     }
 
     stages {
 
-        /* ---------------------------------------------------------
-         * Task 1 – Clone repository
-         * --------------------------------------------------------- */
-        stage('Task 1 - Clone repository') {
+        stage('Task 1 - Checkout SCM (Clone repo)') {
             steps {
-                echo "Repository cloned by Jenkins automatically (SCM)"
+                checkout scm
+                sh 'echo "✅ Repo checked out (SCM)"'
             }
         }
 
-        /* ---------------------------------------------------------
-         * Task 2.1 – Verify Python version
-         * --------------------------------------------------------- */
         stage('Task 2.1 - Verify Python 3.11') {
             steps {
                 sh '''
@@ -31,15 +50,11 @@ pipeline {
             }
         }
 
-        /* ---------------------------------------------------------
-         * Task 2.2 – Create virtual environment
-         * --------------------------------------------------------- */
-        stage('Task 2.2 - Create virtualenv') {
+        stage('Task 2.2 - Create / Reuse Virtualenv') {
             steps {
                 sh '''
                 set -e
                 if [ ! -d "${VENV_DIR}" ]; then
-                    echo "Creating virtualenv ${VENV_DIR}"
                     ${PYTHON_BIN} -m venv ${VENV_DIR}
                 else
                     echo "Virtualenv already exists, reusing it"
@@ -48,43 +63,40 @@ pipeline {
             }
         }
 
-        /* ---------------------------------------------------------
-         * Task 2.3 – Install Python dependencies
-         * --------------------------------------------------------- */
         stage('Task 2.3 - Install Python dependencies') {
             steps {
                 sh '''
                 set -e
                 . ${VENV_DIR}/bin/activate
-
                 pip install --upgrade pip
-                pip install -r ${REQ_FILE}
+                pip install -r requirements-pyats-24.3-python311.txt
                 '''
             }
         }
 
-        /* ---------------------------------------------------------
-         * Task 2.4 – Verify pyATS environment (CI-SAFE)
-         * --------------------------------------------------------- */
-        stage('Task 2.4 - Verify pyATS environment') {
+        stage('Task 2.4 - Verify pyATS / Genie / Unicon imports') {
             steps {
                 sh '''
                 set -e
                 . ${VENV_DIR}/bin/activate
-
-                echo "Python version:"
-                python --version
-
-                echo "Verifying pyATS / Genie / Unicon imports:"
-                python - << 'EOF'
+                python - << 'PY'
 import pyats
 import genie
 import unicon
-
 print("pyATS import OK")
 print("Genie import OK")
 print("Unicon import OK")
-EOF
+PY
+                '''
+            }
+        }
+
+        stage('Task 3 - Run pyATS Config Push') {
+            steps {
+                sh '''
+                set -e
+                . ${VENV_DIR}/bin/activate
+                python config_parallel__access-05.py
                 '''
             }
         }
@@ -92,7 +104,7 @@ EOF
 
     post {
         success {
-            echo "✅ Task 1 + Task 2 completed successfully"
+            echo "✅ Pipeline completed successfully"
         }
         failure {
             echo "❌ Pipeline failed — check logs above"

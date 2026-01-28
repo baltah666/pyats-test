@@ -1,34 +1,46 @@
 #!/usr/bin/env python3
 
+import os
+import sys
+import time
 from pyats.topology import loader
 from pyats.async_ import pcall
 from tabulate import tabulate
-import time
-import sys
 
-# ==============================
-# Configuration to push
-# ==============================
-CONFIG_COMMANDS = """
-ip http server
-"""
+# ==========================================================
+# Required Jenkins parameters
+# ==========================================================
 
-# ==============================
-# Available testbeds
-# ==============================
-TESTBEDS = {
-    "1": "testbed_access_9200.yaml",
-    "2": "testbed_access_9300.yaml",
-    "3": "testbed_access_2960.yaml",
-    "4": "testbed_datacenter_n9k.yaml",
-    "5": "testbed_routers.yaml",
-    "6": "testbed_industrial.yaml",
-    "7": "testbed_core_9500.yaml",
-}
+CONFIG_COMMANDS = os.getenv("CONFIG_COMMANDS")
+TESTBEDS_ENV = os.getenv("TESTBEDS")
 
-# ==============================
+if not CONFIG_COMMANDS or not CONFIG_COMMANDS.strip():
+    print("❌ CONFIG_COMMANDS is not set or empty")
+    sys.exit(1)
+
+if not TESTBEDS_ENV or not TESTBEDS_ENV.strip():
+    print("❌ TESTBEDS is not set or empty")
+    sys.exit(1)
+
+# ==========================================================
+# Parse testbed files
+# ==========================================================
+
+TESTBED_FILES = [tb.strip() for tb in TESTBEDS_ENV.split(",") if tb.strip()]
+
+if not TESTBED_FILES:
+    print("❌ No testbeds selected")
+    sys.exit(1)
+
+for tb in TESTBED_FILES:
+    if not os.path.isfile(tb):
+        print(f"❌ Testbed file not found: {tb}")
+        sys.exit(1)
+
+# ==========================================================
 # Per-device worker (parallel)
-# ==============================
+# ==========================================================
+
 def run_on_device(device):
     try:
         device.connect(
@@ -51,43 +63,10 @@ def run_on_device(device):
         if device.connected:
             device.disconnect()
 
-# ==============================
-# Testbed selection logic
-# ==============================
-def select_testbeds():
-    print("\nSelect target testbeds:")
-    print("0) ALL testbeds")
-    for key, tb in TESTBEDS.items():
-        print(f"{key}) {tb}")
+# ==========================================================
+# Execution report
+# ==========================================================
 
-    choice = input("\nEnter choice (e.g. 1,2,3): ").strip()
-
-    if choice == "0":
-        return list(TESTBEDS.values())
-
-    selected = []
-    for item in choice.split(","):
-        key = item.strip()
-        if key not in TESTBEDS:
-            print(f"❌ Invalid selection: {key}")
-            sys.exit(1)
-        selected.append(TESTBEDS[key])
-
-    selected = list(dict.fromkeys(selected))
-
-    if len(selected) > 1:
-        confirm = input(
-            f"⚠️ You selected {len(selected)} testbeds. Continue? (y/n): "
-        ).lower()
-        if confirm != "y":
-            print("❌ Aborted by user")
-            sys.exit(0)
-
-    return selected
-
-# ==============================
-# Execution report (table)
-# ==============================
 def print_report(results):
     table = []
     ok_count = 0
@@ -101,26 +80,25 @@ def print_report(results):
             fail_count += 1
 
     print("\n================ Execution Report ================\n")
-    print(tabulate(
-        table,
-        headers=["Device", "Status"],
-        tablefmt="grid"
-    ))
-
+    print(tabulate(table, headers=["Device", "Status"], tablefmt="grid"))
     print(f"\nSuccess: {ok_count}")
     print(f"Failed : {fail_count}")
     print("==================================================")
 
-# ==============================
+# ==========================================================
 # Main
-# ==============================
+# ==========================================================
+
 def main():
     start_time = time.time()
     all_results = []
 
-    selected_testbeds = select_testbeds()
+    print("\n🔧 Configuration to be pushed:")
+    print("--------------------------------------------------")
+    print(CONFIG_COMMANDS)
+    print("--------------------------------------------------")
 
-    for tb_file in selected_testbeds:
+    for tb_file in TESTBED_FILES:
         print(f"\n🚀 Running on testbed: {tb_file}")
         testbed = loader.load(tb_file)
 
