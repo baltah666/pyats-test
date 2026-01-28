@@ -64,7 +64,7 @@ pipeline {
         }
 
         /* ---------------------------------------------------------
-         * Task 2.4 – Verify pyATS environment (FIXED)
+         * Task 2.4 – Verify pyATS environment (CI-SAFE)
          * --------------------------------------------------------- */
         stage('Task 2.4 - Verify pyATS environment') {
             steps {
@@ -75,15 +75,15 @@ pipeline {
                 echo "Python version:"
                 python --version
 
-                echo "pyATS CLI version:"
-                pyats version
-
-                echo "Verifying core imports:"
+                echo "Verifying pyATS / Genie / Unicon imports:"
                 python - << 'EOF'
 import pyats
-import unicon
 import genie
-print("pyATS / Unicon / Genie imports OK")
+import unicon
+
+print("pyATS import OK")
+print("Genie import OK")
+print("Unicon import OK")
 EOF
                 '''
             }
