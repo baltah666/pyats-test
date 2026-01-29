@@ -1,12 +1,15 @@
 # ⚠️ LEGACY / FROZEN REPOSITORY
 
-This repository is **frozen** and kept for reference only.
+This repository is **FROZEN** and kept for reference and rollback only.
 
-- No new features will be added
-- No architectural changes will be made
-- Jenkins pipelines depending on this repo should not be modified
+❌ No new features  
+❌ No refactoring  
+❌ No tuning or enhancements  
 
-👉 Active development has moved to:
-**pyats-config-push** (new repository)
+✅ Jenkins jobs depending on this repo should remain unchanged.
 
-Last stable version: v1.0.0
+👉 Active development has moved to a NEW repository:
+**pyats-config-push**
+
+Last stable release: **v1.0.0**
+Frozen on: 2026-01-29
