@@ -23,7 +23,6 @@ devices:
         ssh_options: >
           -o StrictHostKeyChecking=no
           -o UserKnownHostsFile=/dev/null
-          -o KexAlgorithms=+diffie-hellman-group1-sha1
           -o KexAlgorithms=+diffie-hellman-group14-sha1
           -o KexAlgorithms=+diffie-hellman-group-exchange-sha1
           -o HostKeyAlgorithms=+ssh-rsa
@@ -34,6 +33,7 @@ devices:
       net_location: Home_Lab
       net_type: accessctrl-techit
       netmiko_driver: cisco_ios
+
 
   home-lab-access-sw02:
     alias: home-lab-access-sw02
@@ -46,7 +46,6 @@ devices:
         ssh_options: >
           -o StrictHostKeyChecking=no
           -o UserKnownHostsFile=/dev/null
-          -o KexAlgorithms=+diffie-hellman-group1-sha1
           -o KexAlgorithms=+diffie-hellman-group14-sha1
           -o KexAlgorithms=+diffie-hellman-group-exchange-sha1
           -o HostKeyAlgorithms=+ssh-rsa
@@ -57,6 +56,7 @@ devices:
       net_location: Home_Lab
       net_type: accessctrl-techit
       netmiko_driver: cisco_ios
+
 
   home-lab-access-sw03:
     alias: home-lab-access-sw03
@@ -69,7 +69,6 @@ devices:
         ssh_options: >
           -o StrictHostKeyChecking=no
           -o UserKnownHostsFile=/dev/null
-          -o KexAlgorithms=+diffie-hellman-group1-sha1
           -o KexAlgorithms=+diffie-hellman-group14-sha1
           -o KexAlgorithms=+diffie-hellman-group-exchange-sha1
           -o HostKeyAlgorithms=+ssh-rsa
