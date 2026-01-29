@@ -4,8 +4,8 @@ testbed:
     alias: Techit-Sweden
     credentials:
         default:
-            username: '%ASK{Enter User Name}'
-            password: '%ASK{Enter User Password}'
+            username: "%ENV{PYATS_USERNAME}"
+            password: "%ENV{PYATS_PASSWORD}"
     custom:
         owner: Abdulilah Baltah
         contacts: Abdulilah,baltah@vattenfall.com

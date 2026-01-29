@@ -1,28 +1,34 @@
 ---
 testbed:
-    name: Techit-Sweden
-    alias: Techit-Sweden
-    credentials:
-        default:
-            username: "%ENV{PYATS_USERNAME}"
-            password: "%ENV{PYATS_PASSWORD}"
-    custom:
-        owner: Abdulilah Baltah
-        contacts: Abdulilah,baltah@vattenfall.com
+  name: Techit-Sweden
+  alias: Techit-Sweden
+
+  credentials:
+    default:
+      username: admin
+      password: cisco
+    enable:
+      password: cisco
+
+  custom:
+    owner: Abdulilah Baltah
+    contacts: Abdulilah,baltah@vattenfall.com
 
 devices:
-    home-lab-core-sw01:
-        alias: home-lab-core-sw01
-        os: iosxe
-        type: switch
-        connections:
-            cli:
-                ip: 192.168.1.52
-                protocol: ssh
-                ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
-                arguments:
-                    learn_hostname: True
-        custom:
-            net_location: vlab
-            net_type: accessctrl-techit
-            netmiko_driver: cisco_ios
+  home-lab-core-sw01:
+    alias: home-lab-core-sw01
+    os: iosxe
+    type: switch
+
+    connections:
+      cli:
+        protocol: ssh
+        ip: 192.168.1.52
+        ssh_options: >
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+
+    custom:
+      net_location: vlab
+      net_type: accessctrl-techit
+      netmiko_driver: cisco_ios
