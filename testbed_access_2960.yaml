@@ -5,10 +5,7 @@ testbed:
   credentials:
     default:
       username: admin
-      password: cisco
-    enable:
-      password: cisco
-
+      password: YOUR_PASSWORD_HERE
   custom:
     owner: Abdulilah Baltah
     contacts: Abdulilah,baltah@vattenfall.com
@@ -23,7 +20,12 @@ devices:
       cli:
         protocol: ssh
         ip: 192.168.1.50
-        ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+        ssh_options: >
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+          -o KexAlgorithms=+diffie-hellman-group1-sha1
+          -o KexAlgorithms=+diffie-hellman-group14-sha1
+          -o KexAlgorithms=+diffie-hellman-group-exchange-sha1
         arguments:
           learn_hostname: true
     custom:
@@ -39,7 +41,12 @@ devices:
       cli:
         protocol: ssh
         ip: 192.168.1.130
-        ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+        ssh_options: >
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+          -o KexAlgorithms=+diffie-hellman-group1-sha1
+          -o KexAlgorithms=+diffie-hellman-group14-sha1
+          -o KexAlgorithms=+diffie-hellman-group-exchange-sha1
         arguments:
           learn_hostname: true
     custom:
@@ -55,7 +62,12 @@ devices:
       cli:
         protocol: ssh
         ip: 192.168.1.51
-        ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+        ssh_options: >
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+          -o KexAlgorithms=+diffie-hellman-group1-sha1
+          -o KexAlgorithms=+diffie-hellman-group14-sha1
+          -o KexAlgorithms=+diffie-hellman-group-exchange-sha1
         arguments:
           learn_hostname: true
     custom:
