@@ -26,6 +26,8 @@ devices:
           -o KexAlgorithms=+diffie-hellman-group1-sha1
           -o KexAlgorithms=+diffie-hellman-group14-sha1
           -o KexAlgorithms=+diffie-hellman-group-exchange-sha1
+          -o HostKeyAlgorithms=+ssh-rsa
+          -o PubkeyAcceptedAlgorithms=+ssh-rsa
         arguments:
           learn_hostname: true
     custom:
@@ -47,6 +49,8 @@ devices:
           -o KexAlgorithms=+diffie-hellman-group1-sha1
           -o KexAlgorithms=+diffie-hellman-group14-sha1
           -o KexAlgorithms=+diffie-hellman-group-exchange-sha1
+          -o HostKeyAlgorithms=+ssh-rsa
+          -o PubkeyAcceptedAlgorithms=+ssh-rsa
         arguments:
           learn_hostname: true
     custom:
@@ -68,6 +72,8 @@ devices:
           -o KexAlgorithms=+diffie-hellman-group1-sha1
           -o KexAlgorithms=+diffie-hellman-group14-sha1
           -o KexAlgorithms=+diffie-hellman-group-exchange-sha1
+          -o HostKeyAlgorithms=+ssh-rsa
+          -o PubkeyAcceptedAlgorithms=+ssh-rsa
         arguments:
           learn_hostname: true
     custom:
