@@ -5,7 +5,7 @@ testbed:
   credentials:
     default:
       username: admin
-      password: YOUR_PASSWORD_HERE
+      password: cisco
   custom:
     owner: Abdulilah Baltah
     contacts: Abdulilah,baltah@vattenfall.com
